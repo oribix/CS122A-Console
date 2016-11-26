@@ -36,12 +36,20 @@ void getoutputG(unsigned short matrixGreen[]){
 
 
 //gets the controller vector for dual shock 3 clone
-long long getDS3Vector(){
-    return 0;
+unsigned long long getDS3Vector(){
+    long long ds3Vector = 0;
+    
+    unsigned char i;
+    for(i = 0; i < 2 ; i++){
+        ds3Vector <<= 8;
+        ds3Vector |= USART_Receive(0);
+    }
+    
+    return ds3Vector;
 }
 
 enum Fetcher {FETCH_Init, FETCH_Wait} fetcher;
-unsigned char ds3;
+unsigned long long ds3;
 
 void fetcherInit(){
     fetcher = FETCH_Init;
@@ -55,7 +63,7 @@ void fetcherTick(){
         break;
         
         case FETCH_Wait:
-            ds3 = USART_Receive(0);
+            ds3 = getDS3Vector();
         break;
     }
     
@@ -98,7 +106,7 @@ void MOS_Tick(){
             ;
             int i;
             for(i = 0; i < 8; i++){
-                matrixR[i] = ds3;
+                matrixR[i] = ds3 & 0xFFFF;
             }
             displayMatrixRow(rowToPrint, matrixR, matrixG);
             if(rowToPrint < 7) rowToPrint++;
