@@ -22,6 +22,15 @@
 unsigned short matrixG[8]; //green matrix data
 unsigned short matrixR[8]; //red matrix data
 
+void delay_ms(int miliSec) { //for 8 Mhz crystal
+    int i,j;
+    for(i=0;i<miliSec;i++) {
+        for(j=0;j<775;j++) {
+            asm("nop");
+        }
+    }
+}
+
 //requests from game cartridge the red matrix data
 //must be done according to protocol
 void getoutputR(unsigned short matrixRed[]){
@@ -34,13 +43,18 @@ void getoutputG(unsigned short matrixGreen[]){
     
 }
 
+void ds3Rumble(unsigned char duration){
+    USART_Send(duration, 0);
+}
 
 //gets the controller vector for dual shock 3 clone
 unsigned long long getDS3Vector(){
     long long ds3Vector = 0;
     
+    ds3Rumble(0);
+    
     unsigned char i;
-    for(i = 0; i < 2 ; i++){
+    for(i = 0; i < 8 ; i++){
         ds3Vector <<= 8;
         ds3Vector |= USART_Receive(0);
     }
@@ -155,6 +169,7 @@ int main(void)
    initUSART(0);
    SNES_init();
    
+   delay_ms(5000);
    
    //Start Tasks  
    StartMOS(1);
