@@ -12,6 +12,14 @@
 #define MATRIXROWPORT PORTB
 #define MATRIXDATAPORT PORTA
 
+void disableMatrix(){
+    MATRIXDATAPORT |= 0022; // disable output (OE High)
+}
+
+void enableMatrix(){
+    MATRIXDATAPORT &= ~0022; // enable output (OE low)
+}
+
 void displayMatrixRow(unsigned char row, unsigned short red[], unsigned short green[]){
     
     if(row > 7) return;

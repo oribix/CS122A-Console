@@ -77,7 +77,12 @@ void fetcherTick(){
         break;
         
         case FETCH_Wait:
+            //get ds3 controller vector
+            //note that we disable-enable matrix output
+            //this prevents an output bug
+            disableMatrix();
             ds3 = getDS3Vector();
+            enableMatrix();
         break;
     }
     
@@ -169,7 +174,7 @@ int main(void)
    initUSART(0);
    SNES_init();
    
-   delay_ms(5000);
+   delay_ms(5000); //wait for Bluetooth to sync
    
    //Start Tasks  
    StartMOS(1);
