@@ -158,7 +158,7 @@ void fetcherTask()
     for(;;)
     {
         fetcherTick();
-        vTaskDelay(50);
+        vTaskDelay(10);
     }
 }
 
@@ -232,7 +232,7 @@ int main(void)
    
    SNES_init();
    
-   //wait for Bluetooth to syn
+   //wait for Bluetooth to sync
    delay_ms(5000);
    
    //releases the cartridge
