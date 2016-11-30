@@ -43,15 +43,16 @@ void getoutputG(unsigned short matrixGreen[]){
     
 }
 
-void ds3Rumble(unsigned char duration){
-    USART_Send(duration, 0);
+void ds3Rumble(bool rumble){
+    USART_Send(rumble, 0);
+    while(!USART_HasTransmitted(0));
 }
 
 //gets the controller vector for dual shock 3 clone
-unsigned long long getDS3Vector(){
+unsigned long long getDS3Vector(bool rumble){
     long long ds3Vector = 0;
     
-    ds3Rumble(0);
+    ds3Rumble(rumble);
     
     unsigned char i;
     for(i = 0; i < 8 ; i++){
@@ -64,6 +65,7 @@ unsigned long long getDS3Vector(){
 
 enum Fetcher {FETCH_Init, FETCH_Wait} fetcher;
 unsigned long long ds3;
+unsigned short snesVector;
 
 void fetcherInit(){
     fetcher = FETCH_Init;
@@ -74,15 +76,20 @@ void fetcherTick(){
     switch(fetcher){
         case FETCH_Init:
             ds3 = 0;
+            snesVector = 0;
         break;
         
         case FETCH_Wait:
+            ;
+            bool rumble = !GetBit(PINC, 0);
             //get ds3 controller vector
             //note that we disable-enable matrix output
             //this prevents an output bug
             disableMatrix();
-            ds3 = getDS3Vector();
+            ds3 = getDS3Vector(rumble);
             enableMatrix();
+            
+            snesVector = getSNESVector();
         break;
     }
     
@@ -168,7 +175,7 @@ int main(void)
 { 
    DDRA = 0xFF; PORTA = 0x00;
    DDRB = 0xFF; PORTB = 0x00;
-   DDRC = 0xFF; PORTC = 0x00;
+   DDRC = 0x00; PORTC = 0xFF;
    DDRD = 0xFF; PORTD = 0x00;
    
    initUSART(0);
