@@ -66,6 +66,7 @@ unsigned long long getDS3Vector(bool rumble){
 enum Fetcher {FETCH_Init, FETCH_Wait} fetcher;
 unsigned long long ds3;
 unsigned short snesVector;
+unsigned char request;
 
 void fetcherInit(){
     fetcher = FETCH_Init;
@@ -77,19 +78,66 @@ void fetcherTick(){
         case FETCH_Init:
             ds3 = 0;
             snesVector = 0;
+            request = 0;
         break;
         
         case FETCH_Wait:
-            ;
-            bool rumble = !GetBit(PINC, 0);
-            //get ds3 controller vector
-            //note that we disable-enable matrix output
-            //this prevents an output bug
-            disableMatrix();
-            ds3 = getDS3Vector(rumble);
-            enableMatrix();
+            request = 0;
             
-            snesVector = getSNESVector();
+            //if a request was made
+            if(USART_HasReceived(1)){
+                request = USART_Receive(1);
+            }
+            
+            //send controller vectors if request says so
+            if(GetBit(request, 0)){
+                //rumbles if requested
+                bool rumble = GetBit(request, 7);
+                //get ds3 controller vector
+                //note that we disable-enable matrix output
+                //this prevents an output bug
+                disableMatrix();
+                ds3 = getDS3Vector(rumble);
+                enableMatrix();
+                snesVector = getSNESVector();
+                
+                //send 8 byte ds3Vector from MSByte to LSByte
+                unsigned char i = 8;
+                while(i-->0){
+                    unsigned char byte = (ds3 >> (i * 8)) & 0xFF;
+                    USART_Send(byte, 1);
+                }
+                
+                //send 2 byte SNESVector from MSByte to LSByte
+                unsigned char SNEShigh = snesVector >> 8;
+                USART_Send(SNEShigh, 1);
+                unsigned char SNESlow = snesVector & 0xFF;
+                USART_Send(SNESlow, 1);
+            }
+            //time to receive the matrix data
+            else if(GetBit(request, 1)){
+                //informs cartridge that the console is ready
+                USART_Send(0, 1);
+                while(!USART_HasTransmitted(1));
+                
+                //receive red matrix
+                unsigned char i;
+                for(i = 0; i < 8; i++){
+                    unsigned char highByte = USART_Receive(1);
+                    unsigned char lowByte = USART_Receive(1);
+                    unsigned short row = (highByte << 8) | lowByte;
+                    matrixR[i] = row;
+                }
+                
+                //receive green matrix
+                for(i = 0; i < 8; i++){
+                    unsigned char highByte = USART_Receive(1);
+                    unsigned char lowByte = USART_Receive(1);
+                    unsigned short row = (highByte << 8) | lowByte;
+                    matrixG[i] = row;
+                }
+            }
+            
         break;
     }
     
@@ -178,10 +226,18 @@ int main(void)
    DDRC = 0x00; PORTC = 0xFF;
    DDRD = 0xFF; PORTD = 0x00;
    
+   //init UARTS
    initUSART(0);
+   initUSART(1);
+   
    SNES_init();
    
-   delay_ms(5000); //wait for Bluetooth to sync
+   //wait for Bluetooth to syn
+   delay_ms(5000);
+   
+   //releases the cartridge
+   USART_Send(0, 1);
+   while(!USART_HasTransmitted(1));
    
    //Start Tasks  
    StartMOS(1);
