@@ -150,7 +150,7 @@ void MOSTask()
    for(;;) 
    { 	
 	MOS_Tick();
-	vTaskDelay(3);
+	vTaskDelay(2);
    } 
 }
 
