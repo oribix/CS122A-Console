@@ -98,21 +98,20 @@ void fetcherTick(){
                     ds3 = getDS3Vector(rumble);
                     enableMatrix();
                     
-                    //snesVector = getSNESVector();
+                    snesVector = getSNESVector();
                     
                     //send 8 byte ds3Vector from MSByte to LSByte
                     unsigned char i = 8;
                     while(i-->0){
                         unsigned char byte = (ds3 >> (i * 8)) & 0xFF;
                         USART_Send(byte, 1);
-                        while(!USART_HasTransmitted(1));
                     }
                     
-                    ////send 2 byte SNESVector from MSByte to LSByte
-                    //unsigned char SNEShigh = snesVector >> 8;
-                    //USART_Send(SNEShigh, 1);
-                    //unsigned char SNESlow = snesVector & 0xFF;
-                    //USART_Send(SNESlow, 1);
+                    //send 2 byte SNESVector from MSByte to LSByte
+                    unsigned char SNEShigh = snesVector >> 8;
+                    unsigned char SNESlow = snesVector & 0xFF;
+                    USART_Send(SNEShigh, 1);
+                    USART_Send(SNESlow, 1);
                 }
                 ////time to receive the matrix data
                 //else if(GetBit(request, 1)){
