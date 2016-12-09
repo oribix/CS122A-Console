@@ -93,22 +93,20 @@ void fetcherTick(){
                     //rumbles if requested
                     bool rumble = GetBit(request, 7);
                     
-                    USART_Send(rumble, 1);
-                    while(!USART_HasTransmitted(1));
-                    
-                    ////get ds3 controller vector
-                    //disableMatrix(); //prevents output bug
-                    //ds3 = getDS3Vector(rumble);
-                    //enableMatrix();
+                    //get ds3 controller vector
+                    disableMatrix(); //prevents output bug
+                    ds3 = getDS3Vector(rumble);
+                    enableMatrix();
                     
                     //snesVector = getSNESVector();
                     
-                    ////send 8 byte ds3Vector from MSByte to LSByte
-                    //unsigned char i = 8;
-                    //while(i-->0){
-                        //unsigned char byte = (ds3 >> (i * 8)) & 0xFF;
-                        //USART_Send(byte, 1);
-                    //}
+                    //send 8 byte ds3Vector from MSByte to LSByte
+                    unsigned char i = 8;
+                    while(i-->0){
+                        unsigned char byte = (ds3 >> (i * 8)) & 0xFF;
+                        USART_Send(byte, 1);
+                        while(!USART_HasTransmitted(1));
+                    }
                     
                     ////send 2 byte SNESVector from MSByte to LSByte
                     //unsigned char SNEShigh = snesVector >> 8;
@@ -235,8 +233,8 @@ int main(void)
    
    SNES_init();
    
-   ////wait for Bluetooth to sync
-   //delay_ms(5000);
+   //wait for Bluetooth to sync
+   delay_ms(5000);
    
    //Start Tasks  
    StartMOS(1);
