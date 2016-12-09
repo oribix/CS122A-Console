@@ -63,6 +63,21 @@ unsigned long long getDS3Vector(bool rumble){
     return ds3Vector;
 }
 
+//receives matrix from USART1 and returns it
+//matrix is a reference to the matrix array to store the received values
+//size is the number of elements in the array
+unsigned short * receiveMatrix(unsigned short * matrix, unsigned char size){
+    unsigned char i;
+    for(i = 0; i < size; i++){
+        unsigned char highByte = USART_Receive(1);
+        unsigned char  lowByte = USART_Receive(1);
+        unsigned short row = (highByte << 8) | lowByte;
+        matrix[i] = row;
+    }
+    
+    return matrix;
+}
+
 enum Fetcher {FETCH_Init, FETCH_Wait} fetcher;
 unsigned long long ds3;
 unsigned short snesVector;
@@ -82,10 +97,11 @@ void fetcherTick(){
         break;
         
         case FETCH_Wait:
-            request = 0; //reset request
-            
+            request = 0;
             //if a request was made
             if(USART_HasReceived(1)){
+                disableMatrix(); //prevents output bug
+                
                 //read the request
                 request = USART_Receive(1);
                 
@@ -94,9 +110,7 @@ void fetcherTick(){
                     bool rumble = GetBit(request, 7);
                     
                     //get ds3 controller vector
-                    disableMatrix(); //prevents output bug
                     ds3 = getDS3Vector(rumble);
-                    enableMatrix();
                     
                     snesVector = getSNESVector();
                     
@@ -113,29 +127,20 @@ void fetcherTick(){
                     USART_Send(SNEShigh, 1);
                     USART_Send(SNESlow, 1);
                 }
-                ////time to receive the matrix data
-                //else if(GetBit(request, 1)){
-                //    //informs cartridge that the console is ready
-                //    USART_Send(0, 1);
-                //    while(!USART_HasTransmitted(1));
-                //    
-                //    //receive red matrix
-                //    unsigned char i;
-                //    for(i = 0; i < 8; i++){
-                //        unsigned char highByte = USART_Receive(1);
-                //        unsigned char lowByte = USART_Receive(1);
-                //        unsigned short row = (highByte << 8) | lowByte;
-                //        matrixR[i] = row;
-                //    }
-                //    
-                //    //receive green matrix
-                //    for(i = 0; i < 8; i++){
-                //        unsigned char highByte = USART_Receive(1);
-                //        unsigned char lowByte = USART_Receive(1);
-                //        unsigned short row = (highByte << 8) | lowByte;
-                //        matrixG[i] = row;
-                //    }
-                //}
+                //time to receive the matrix data
+                else if(GetBit(request, 1)){
+                    //informs cartridge that the console is ready
+                    USART_Send(request, 1);
+                    while(!USART_HasTransmitted(1));
+                    
+                    //receive red matrix
+                    receiveMatrix(matrixR, 8);
+                    
+                    //receive green matrix
+                    receiveMatrix(matrixG, 8);
+                }
+                
+                enableMatrix();
             }
             
         break;
