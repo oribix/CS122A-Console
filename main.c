@@ -182,11 +182,6 @@ void MOS_Tick(){
             rowToPrint = 0;
 		break;
 		case MOS_Wait:
-            ;
-            int i;
-            for(i = 0; i < 8; i++){
-                matrixR[i] = ds3 & 0xFFFF;
-            }
             displayMatrixRow(rowToPrint, matrixR, matrixG);
             if(rowToPrint < 7) rowToPrint++;
             else rowToPrint = 0;
