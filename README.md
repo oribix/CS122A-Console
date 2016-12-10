@@ -21,21 +21,24 @@ You can also see a video deomonstration.
 For wiring see the pictures in the google doc.
 
 ##File Descriptions
-- main.c
-  - This has the main function and core logic.
-  The state machines here drive the matrix and handle all communications.
-- bit.h
-  - BInary manipulation helper functions
-- led_matrix.h
-  - LED matrix Driver
-- SNES_controller.h
-  - SNES controller driver
-- usart_ATmega1284.h
-  - ATMEGA1284 USART driver
+
+###main.c
+This has the main function and core logic.
+The state machines here drive the matrix and handle all communications.
+
+###bit.h
+BInary manipulation helper functions
+
+###led_matrix.h
+LED matrix Driver
+
+###SNES_controller.h
+SNES controller driver
+
+###usart_ATmega1284.h
+ATMEGA1284 USART driver
 
 ###FreeRTOS Files
-The rest of the files are for FreeRTOS.
-They are:
 - croutine.c
 - heap_1.c
 - list.c
