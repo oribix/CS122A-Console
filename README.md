@@ -10,7 +10,11 @@ The console is currently able to accept 2 controllers.
 The first controller is the [DUALSHOCK3 clone](https://github.com/oribix/DualShock3-Clone-ATMEGA1284).
 The second controller is a SNES controller because making a second DS3 would be expensive.
 
-You can also see a video deomonstration.
+The console takes ATMEGA1284s as [game cartridges](https://github.com/oribix/CS122A-Console-Cartridge).
+
+See the [Google Doc](https://drive.google.com/open?id=0B5K5OUHJGcLmLTlsRlRZWVctNUk) for more details.
+
+[Video Demonstration]()
 
 ##Hardware
 - ATMEGA1284
@@ -18,16 +22,18 @@ You can also see a video deomonstration.
 - Shift Registers: SN74HC595N
 - 8x8 LED matrix: 1588ASRG
 
-For wiring see the pictures in the google doc.
+For wiring see the pictures in the [Google Doc](https://drive.google.com/open?id=0B5K5OUHJGcLmLTlsRlRZWVctNUk).
 
 ##File Descriptions
 
 ###main.c
 This has the main function and core logic.
 The state machines here drive the matrix and handle all communications.
+Games should not be made using this code as a base.
+Instead use the [Game Cartridge API](https://github.com/oribix/CS122A-Console-Cartridge).
 
 ###bit.h
-BInary manipulation helper functions
+Binary manipulation helper functions
 
 ###led_matrix.h
 LED matrix Driver
