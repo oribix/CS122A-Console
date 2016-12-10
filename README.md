@@ -1,5 +1,7 @@
 #DUALSHOCK3 Clone
 This is a console to go with the Dualshock 3 clone.
+It uses [FreeRTOS](http://www.freertos.org/) to power it.
+
 The console uses a bluetooth module to connect to the controllers.
 It has 2 8x8 Red-Green LED matrixes for output.
 The matrices are driven by 4 shift registers.
