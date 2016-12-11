@@ -14,7 +14,7 @@ The console takes ATMEGA1284s as [game cartridges](https://github.com/oribix/CS1
 
 See the [Google Doc](https://drive.google.com/open?id=0B5K5OUHJGcLmLTlsRlRZWVctNUk) for more details.
 
-[Video Demonstration]()
+[Video Demonstration](https://www.youtube.com/watch?v=FelWu7re3BA)
 
 ##Hardware
 - ATMEGA1284
