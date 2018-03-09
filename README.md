@@ -1,4 +1,4 @@
-#DUALSHOCK3 Clone
+# DUALSHOCK3 Clone
 This is a console to go with the Dualshock 3 clone.
 It uses [FreeRTOS](http://www.freertos.org/) to power it.
 
@@ -16,7 +16,7 @@ See the [Google Doc](https://drive.google.com/open?id=0B5K5OUHJGcLmLTlsRlRZWVctN
 
 [Video Demonstration](https://www.youtube.com/watch?v=FelWu7re3BA)
 
-##Hardware
+## Hardware
 - ATMEGA1284
 - Bluetooth module: HC-05.
 - Shift Registers: SN74HC595N
@@ -24,27 +24,27 @@ See the [Google Doc](https://drive.google.com/open?id=0B5K5OUHJGcLmLTlsRlRZWVctN
 
 For wiring see the pictures in the [Google Doc](https://drive.google.com/open?id=0B5K5OUHJGcLmLTlsRlRZWVctNUk).
 
-##File Descriptions
+## File Descriptions
 
-###main.c
+### main.c
 This has the main function and core logic.
 The state machines here drive the matrix and handle all communications.
 Games should not be made using this code as a base.
 Instead use the [Game Cartridge API](https://github.com/oribix/CS122A-Console-Cartridge).
 
-###bit.h
+### bit.h
 Binary manipulation helper functions
 
-###led_matrix.h
+### led_matrix.h
 LED matrix Driver
 
-###SNES_controller.h
+### SNES_controller.h
 SNES controller driver
 
-###usart_ATmega1284.h
+### usart_ATmega1284.h
 ATMEGA1284 USART driver
 
-###FreeRTOS Files
+### FreeRTOS Files
 - croutine.c
 - heap_1.c
 - list.c
